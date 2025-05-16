@@ -1,7 +1,7 @@
 import 'package:exemplo_rotas/Home.dart';
-import 'package:exemplo_rotas/TelaA.dart';
-import 'package:exemplo_rotas/TelaB.dart';
-import 'package:exemplo_rotas/TelaC.dart';
+import 'package:exemplo_rotas/Progress.dart';
+import 'package:exemplo_rotas/FormHabit.dart';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,6 +9,9 @@ void main() {
 }
 
 class MyApp extends StatelessWidget{
+
+  final primaryColor = Color(0xFF151026);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,8 +20,8 @@ class MyApp extends StatelessWidget{
         '/': (context) { 
           return Home();
         },
-        '/telaA': (context) => TelaA(),
-        '/telaB': (context) => TelaB(),
+        '/FormHabit': (context) => FormHabit(),
+        '/Progress': (context) => Progress(),
       }
     );
   }
