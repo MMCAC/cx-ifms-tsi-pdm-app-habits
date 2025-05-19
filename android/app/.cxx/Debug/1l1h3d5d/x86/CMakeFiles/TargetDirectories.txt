@@ -1,0 +1,2 @@
+C:/Users/secli.agetic/Documents/TSI/Programacao de Dispositivos Moveis/cx-ifms-tsi-pdm-app-habits/android/app/.cxx/Debug/1l1h3d5d/x86/CMakeFiles/edit_cache.dir
+C:/Users/secli.agetic/Documents/TSI/Programacao de Dispositivos Moveis/cx-ifms-tsi-pdm-app-habits/android/app/.cxx/Debug/1l1h3d5d/x86/CMakeFiles/rebuild_cache.dir

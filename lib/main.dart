@@ -1,28 +1,24 @@
-import 'package:exemplo_rotas/Home.dart';
-import 'package:exemplo_rotas/Progress.dart';
-import 'package:exemplo_rotas/FormHabit.dart';
-
 import 'package:flutter/material.dart';
+import 'Home.dart';
+import 'FormHabit.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget{
-
-  final primaryColor = Color(0xFF151026);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Flutter SQLite Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/',
       routes: {
-        '/': (context) { 
-          return Home();
-        },
+        '/': (context) => const HomePage(),
         '/FormHabit': (context) => FormHabit(),
-        '/Progress': (context) => Progress(),
-      }
+      },
     );
   }
 }
