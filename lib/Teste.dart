@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'DatabaseHelper.dart';
-import 'Habito.dart';
+import 'DataBase/DatabaseHelper.dart';
+import 'models/Habito.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

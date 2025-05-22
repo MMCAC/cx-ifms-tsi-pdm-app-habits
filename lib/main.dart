@@ -1,24 +1,88 @@
+import 'package:exemplo_rotas/Pages/SettingsPage.dart';
+import 'package:exemplo_rotas/controllers/SettingsController.dart';
+import 'package:exemplo_rotas/models/UserSettings.dart';
 import 'package:flutter/material.dart';
-import 'Home.dart';
-import 'FormHabit.dart';
+import 'Pages/HomePage.dart';
+import 'Pages/FormHabit.dart';
 
 void main() {
-  runApp(const MyApp());
+
+  final settings = ValueNotifier(UserSettings(
+    color: Colors.blue,
+    icon: Icons.person,
+    name: 'Maicon',
+  ));
+  runApp(SettingsController(settings: settings, child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget{
+  @override
+  State<MyApp> createState(){
+    return _MyAppState();
+  }
+}
+
+class _MyAppState extends State<MyApp>{
+
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void _toggleTheme(){
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter SQLite Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: _themeMode,
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(),
+        '/': (context) => HomePage(toggleTheme: _toggleTheme),
         '/FormHabit': (context) => FormHabit(),
+        '/Settings': (context) => SettingsPage(),
       },
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// class MyApp extends StatelessWidget {
+  
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Hábitos',
+//       theme: ThemeData.light(),
+//       darkTheme: ThemeData.dark(),
+//       themeMode: _themeMode, //ThemeData(primarySwatch: Colors.blue)
+//       initialRoute: '/',
+//       routes: {
+//         '/': (context) => HomePage(),
+//         '/FormHabit': (context) => FormHabit(),
+//       },
+//     );
+//   }
+
+//   ThemeData myTheme(){
+//     return ThemeData(
+
+//     );
+//   }
+// }
