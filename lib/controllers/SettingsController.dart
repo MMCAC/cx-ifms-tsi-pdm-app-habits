@@ -1,25 +1,27 @@
 import 'package:exemplo_rotas/models/UserSettings.dart';
 import 'package:flutter/material.dart';
 
-class SettingsController extends InheritedWidget{
-  final ValueNotifier<UserSettings> settings;
+class SettingsController extends ChangeNotifier {
+  UserSettings _settings = UserSettings(
+    name: 'Maicon',
+    icon: Icons.person,
+    color: Color.fromARGB(255, 0, 79, 197),
+  );
 
+  UserSettings get settings => _settings;
 
-  //Não fiz essa parte do SettingsController, tentei remover o super e o mesmo não deixou
-  SettingsController({
-    required this.settings,
-    required Widget child,
-    Key? key,
-  }) : super(key: key, child: child);
-
-  static SettingsController of(BuildContext context){
-    final SettingsController? result = context.dependOnInheritedWidgetOfExactType<SettingsController>();
-    assert(result != null, 'Nenhum SetingsController encontrado no contexto');
-    return result!;
+  void updateName(String name) {
+    _settings.name = name;
+    notifyListeners();
   }
 
-  @override
-  bool updateShouldNotify(SettingsController oldWidget){
-    return settings != oldWidget.settings;
+  void updateIcon(IconData icon) {
+    _settings.icon = icon;
+    notifyListeners();
+  }
+
+  void updateColor(Color color) {
+    _settings.color = color;
+    notifyListeners();
   }
 }

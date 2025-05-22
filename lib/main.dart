@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:exemplo_rotas/Pages/SettingsPage.dart';
 import 'package:exemplo_rotas/controllers/SettingsController.dart';
 import 'package:exemplo_rotas/models/UserSettings.dart';
@@ -7,12 +8,12 @@ import 'Pages/FormHabit.dart';
 
 void main() {
 
-  final settings = ValueNotifier(UserSettings(
-    color: Colors.blue,
-    icon: Icons.person,
-    name: 'Maicon',
-  ));
-  runApp(SettingsController(settings: settings, child: MyApp()));
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => SettingsController(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget{
