@@ -1,28 +1,22 @@
 class Habito {
   int? id;
-  String? nome;
-  String? emoji;
-  bool concluido;
-  String? dias;
-  String? ultimaAtualizacao;
+  String nome;
+  String? dataCriacao;   // Data de criação do hábito (yyyy-MM-dd)
+  String? dataConclusao; // Data de conclusão do hábito (yyyy-MM-dd)
 
   Habito({
     this.id,
-    this.nome,
-    this.emoji,
-    this.concluido = false,
-    this.dias,
-    this.ultimaAtualizacao,
+    required this.nome,
+    this.dataCriacao,
+    this.dataConclusao,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'nome': nome,
-      'emoji': emoji,
-      'concluido': concluido ? 1 : 0,
-      'dias': dias,
-      'ultimaAtualizacao': ultimaAtualizacao,
+      'dataCriacao': dataCriacao,
+      'dataConclusao': dataConclusao,
     };
   }
 
@@ -30,10 +24,21 @@ class Habito {
     return Habito(
       id: map['id'],
       nome: map['nome'],
-      emoji: map['emoji'],
-      concluido: map['concluido'] == 1,
-      dias: map['dias'],
-      ultimaAtualizacao: map['ultimaAtualizacao'],
+      dataCriacao: map['dataCriacao'],
+      dataConclusao: map['dataConclusao'],
     );
+  }
+
+  void marcarComoConcluido() {
+    dataConclusao = DateTime.now().toIso8601String().split('T')[0]; // yyyy-MM-dd
+  }
+
+  void desmarcarConclusao() {
+    dataConclusao = null;
+  }
+
+  bool foiConcluidoHoje() {
+    final hoje = DateTime.now().toIso8601String().split('T')[0];
+    return dataConclusao == hoje;
   }
 }

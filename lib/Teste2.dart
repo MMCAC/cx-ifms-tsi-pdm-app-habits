@@ -42,14 +42,6 @@ class _HomePageState extends State<HomePage> {
   void _deleteHabit(int id) async {
     await DatabaseHelper().deleteHabit(id);
     _loadHabits();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Hábito excluído'),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 2),
-      ),
-    );
   }
 
   void _editHabit(int id) {
@@ -63,45 +55,12 @@ class _HomePageState extends State<HomePage> {
 }
 
   void _toggleConcluido(Map<String, dynamic> habit) async {
-  final novoStatus = habit['concluido'] == 0 ? 1 : 0;
-  final habitAtualizado = {...habit, 'concluido': novoStatus};
+    final novoStatus = habit['concluido'] == 0 ? 1 : 0;
+    final habitAtualizado = {...habit, 'concluido': novoStatus};
 
-  // Remove da lista atual com animação
-  if (novoStatus == 1) {
-    final index = _habitosParaFazer.indexWhere((h) => h['id'] == habit['id']);
-    if (index != -1) {
-      final removed = _habitosParaFazer.removeAt(index);
-      _keyParaFazer.currentState?.removeItem(
-        index,
-        (context, animation) => SizeTransition(
-          sizeFactor: animation,
-          child: _buildHabitCard(removed),
-        ),
-        duration: Duration(milliseconds: 300),
-      );
-    }
-    _habitosFeitos.insert(0, habitAtualizado);
-    _keyFeitos.currentState?.insertItem(0);
-  } else {
-    final index = _habitosFeitos.indexWhere((h) => h['id'] == habit['id']);
-    if (index != -1) {
-      final removed = _habitosFeitos.removeAt(index);
-      _keyFeitos.currentState?.removeItem(
-        index,
-        (context, animation) => SizeTransition(
-          sizeFactor: animation,
-          child: _buildHabitCard(removed),
-        ),
-        duration: Duration(milliseconds: 300),
-      );
-    }
-    _habitosParaFazer.insert(0, habitAtualizado);
-    _keyParaFazer.currentState?.insertItem(0);
+    await DatabaseHelper().updateHabit(habitAtualizado);
+    _loadHabits();
   }
-
-  await DatabaseHelper().updateHabit(habitAtualizado);
-  setState(() {}); // Atualiza o estado visual
-}
 
   Widget _buildHabitCard(Map<String, dynamic> habit) {
   bool concluido = habit['concluido'] == 1;
@@ -132,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                     DropdownButtonFormField<String>(
                       value: emojiSelecionado,
                       decoration: InputDecoration(labelText: 'Emoji'),
-                      items: ['🍎', '💪', '📚', '🛌', '🚰', '🧘‍♀️', '🥗', '🚶‍♂️'].map((emoji) {
+                      items: ['😀', '📚', '💪', '🧘‍♂️', '🚴‍♂️', '🍎'].map((emoji) {
                         return DropdownMenuItem(
                           value: emoji,
                           child: Text(emoji, style: TextStyle(fontSize: 24)),
@@ -194,15 +153,6 @@ class _HomePageState extends State<HomePage> {
                               'concluido': habit['concluido'],
                             };
                             await DatabaseHelper().updateHabit(atualizado);
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Hábito editado'),
-                                backgroundColor: Colors.blue,
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-
                             _editHabit(habit['id']);
                             _loadHabits();
                           },
@@ -228,15 +178,14 @@ class _HomePageState extends State<HomePage> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (!concluido) // Só mostra se não estiver concluído
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () => _editHabit(habit['id']),
-                      ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteHabit(habit['id']),
-                    ),
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () => _editHabit(habit['id']),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _deleteHabit(habit['id']),
+                  ),
                 ],
               ),
             ),
@@ -358,5 +307,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 }

@@ -1,3 +1,4 @@
+import 'package:exemplo_rotas/Pages/ProgressPage.dart';
 import 'package:provider/provider.dart';
 import 'package:exemplo_rotas/Pages/SettingsPage.dart';
 import 'package:exemplo_rotas/controllers/SettingsController.dart';
@@ -44,6 +45,7 @@ class _MyAppState extends State<MyApp>{
         '/': (context) => HomePage(toggleTheme: _toggleTheme),
         '/FormHabit': (context) => FormHabit(),
         '/Settings': (context) => SettingsPage(),
+        '/Progress': (context) => ProgressPage(),
       },
     );
   }

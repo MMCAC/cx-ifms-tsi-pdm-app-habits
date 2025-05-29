@@ -9,6 +9,7 @@ class FormHabit extends StatefulWidget {
 class _FormHabitState extends State<FormHabit> {
   final TextEditingController _habitNameController = TextEditingController();
   final Map<String, bool> _daysSelected = {
+    'Todos os dias': false,
     'Dom': false,
     'Seg': false,
     'Ter': false,
@@ -56,34 +57,56 @@ class _FormHabitState extends State<FormHabit> {
   }
 
   void _saveHabit() async {
-    String habitName = _habitNameController.text;
-    List<String> selectedDays = _daysSelected.entries
-        .where((entry) => entry.value)
-        .map((entry) => entry.key)
-        .toList();
+  String habitName = _habitNameController.text;
+  List<String> selectedDays = _daysSelected.entries
+      .where((entry) => entry.value)
+      .map((entry) => entry.key)
+      .toList();
 
-    if (habitName.isEmpty || selectedDays.isEmpty || _selectedEmoji == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Preencha o nome, selecione um emoji e pelo menos um dia.')),
-      );
-      return;
-    }
+  if (habitName.isEmpty || selectedDays.isEmpty || _selectedEmoji == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Preencha o nome, selecione um emoji e pelo menos um dia.')),
+    );
+    return;
+  }
 
-    Map<String, dynamic> newHabit = {
-      'nome': habitName,
-      'emoji': _selectedEmoji,
-      'dias': selectedDays.join(','),
-      'concluido': 0,
-      'ultimaAtualizacao': null, // armazena como string separada por vírgula
-    };
+  Map<String, dynamic> newHabit = {
+    'nome': habitName,
+    'emoji': _selectedEmoji,
+    'dias': selectedDays.join(','),
+    'concluido': 0,
+    'ultimaAtualizacao': null,
+  };
 
-    print('Inserindo hábito: $newHabit');
-
+  try {
     int id = await DatabaseHelper().insertHabit(newHabit);
     print('Hábito inserido com id $id');
 
+    // Mostra o SnackBar de sucesso
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Hábito salvo com sucesso!'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    // Aguarda 2 segundos para que o usuário veja o SnackBar
+    await Future.delayed(Duration(seconds: 2));
+
+    // Volta para a tela anterior
     Navigator.pop(context, null);
+  } catch (e) {
+    print('Erro ao salvar hábito: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Erro ao salvar hábito.'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -123,19 +146,36 @@ class _FormHabitState extends State<FormHabit> {
             SizedBox(height: 20),
             Text('Dias da Semana:', style: TextStyle(fontSize: 16)),
             Wrap(
-              spacing: 8,
-              children: _daysSelected.keys.map((day) {
-                return FilterChip(
-                  label: Text(day),
-                  selected: _daysSelected[day]!,
-                  onSelected: (selected) {
-                    setState(() {
-                      _daysSelected[day] = selected;
-                    });
-                  },
-                );
-              }).toList(),
-            ),
+  spacing: 8,
+  children: _daysSelected.keys.map((day) {
+    return FilterChip(
+      label: Text(day),
+      selected: _daysSelected[day]!,
+      onSelected: (selected) {
+        setState(() {
+          if (day == 'Todos os dias') {
+            // Seleciona ou desseleciona todos os dias
+            _daysSelected.updateAll((key, value) => selected);
+          } else {
+            // Atualiza apenas o dia selecionado
+            _daysSelected[day] = selected;
+
+            // Se algum dia for desmarcado, desmarca 'Todos os dias'
+            if (!selected) {
+              _daysSelected['Todos os dias'] = false;
+            } else {
+              // Se todos os dias da semana estiverem selecionados, marca 'Todos os dias'
+              bool allDaysSelected = _daysSelected.entries
+                  .where((entry) => entry.key != 'Todos os dias')
+                  .every((entry) => entry.value);
+              _daysSelected['Todos os dias'] = allDaysSelected;
+            }
+          }
+        });
+      },
+    );
+  }).toList(),
+),
             Spacer(),
             SizedBox(
               width: double.infinity,

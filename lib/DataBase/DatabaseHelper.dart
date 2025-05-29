@@ -7,18 +7,18 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
-  DatabaseHelper._internal();
 
-  static Database? _database;
-
-  void initDatabaseFactory() {
+  DatabaseHelper._internal() {
+    // Inicializa a factory no construtor para garantir que execute apenas uma vez
     if (kIsWeb) {
-      databaseFactory = databaseFactoryFfiWeb; // Web
+      databaseFactory = databaseFactoryFfiWeb;
     } else {
       sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi; // Desktop/Mobile
+      databaseFactory = databaseFactoryFfi;
     }
   }
+
+  static Database? _database;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -27,11 +27,8 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDB(String fileName) async {
-    // Inicializa a factory correta antes de abrir
-    initDatabaseFactory();
-
-    // No web não tem path, só usar o nome do banco
     if (kIsWeb) {
+      // No web, abrir direto pelo nome
       return await openDatabase(
         fileName,
         version: 1,
@@ -48,7 +45,7 @@ class DatabaseHelper {
     }
   }
 
-  Future _createDB(Database db, int version) async {
+  Future<void> _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE habits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -73,9 +70,16 @@ class DatabaseHelper {
 
   Future<int> updateHabit(Map<String, dynamic> habit) async {
     final db = await database;
+
+    // Criar uma cópia do Map para não modificar o original
+    final habitToUpdate = Map<String, dynamic>.from(habit);
+
+    // Remover o campo 'id' para não tentar atualizar a PK
+    habitToUpdate.remove('id');
+
     return await db.update(
       'habits',
-      habit,
+      habitToUpdate,
       where: 'id = ?',
       whereArgs: [habit['id']],
     );
